@@ -20,6 +20,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Fix pour MySQL 5.7+ (évite l'erreur "key too long")
         Schema::defaultStringLength(191);
     }
 }

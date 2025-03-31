@@ -35,17 +35,31 @@
     },
     methods: {
       async submitCourse() {
-        try {
-          const token = localStorage.getItem('access_token');
-          const response = await axios.post('http://localhost:8000/api/courses', this.course, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          alert('Course demandée avec succès !');
-        } catch (error) {
-          console.error(error);
-          alert('Erreur lors de la demande de course.');
-        }
-      },
+  try {
+    const token = localStorage.getItem('access_token');
+
+    // Convertir le format datetime-local vers "Y-m-d H:i:s"
+    const formattedDate = new Date(this.course.scheduled_at)
+      .toISOString()
+      .slice(0, 19)
+      .replace('T', ' ');
+
+    const payload = {
+      ...this.course,
+      scheduled_at: formattedDate
+    };
+
+    const response = await axios.post('http://localhost:8000/api/courses', payload, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    alert('Course demandée avec succès !');
+  } catch (error) {
+    console.error(error);
+    alert('Erreur lors de la demande de course.');
+  }
+}
+
     },
   };
   </script>

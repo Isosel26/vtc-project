@@ -2,18 +2,22 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
 class Chauffeur extends Authenticatable
 {
-    use HasFactory;
+    use HasApiTokens, Notifiable;
 
-    protected $fillable = ['name', 'email', 'password'];
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+    ];
 
-    // Un chauffeur peut accepter plusieurs courses
-    public function courses()
-    {
-        return $this->hasMany(Course::class);
-    }
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 }
