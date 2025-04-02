@@ -9,12 +9,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
-{
-    Schema::table('courses', function (Blueprint $table) {
-        $table->string('status')->default('pending')->after('scheduled_at');
-    });
-}
+
 
 public function down()
 {

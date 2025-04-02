@@ -9,15 +9,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
-{
-    Schema::table('courses', function (Blueprint $table) {
-        $table->unsignedBigInteger('client_id')->after('id');
-
-        // Si tu veux faire la relation (optionnel mais conseillé)
-        $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');
-    });
-}
+    
 
 public function down()
 {

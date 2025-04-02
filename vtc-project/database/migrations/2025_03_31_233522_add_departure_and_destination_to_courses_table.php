@@ -9,13 +9,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
-    {
-        Schema::table('courses', function (Blueprint $table) {
-            $table->string('departure')->after('client_id');
-            $table->string('destination')->after('departure');
-        });
-    }
+    
     
     public function down()
     {

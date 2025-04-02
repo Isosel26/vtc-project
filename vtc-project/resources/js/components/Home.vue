@@ -4,6 +4,7 @@
       <p>Choisissez une option :</p>
       <router-link to="/login">Connexion</router-link>
       <router-link to="/register">Inscription</router-link>
+      <router-link to="/chauffeur/dashboard">test</router-link>
     </div>
   </template>
   
