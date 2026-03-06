@@ -1,66 +1,174 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Driver Valence — Plateforme VTC
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Application web de réservation de courses VTC développée avec **Laravel** (backend) et **Vue.js** (frontend).
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Description
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Driver Valence permet à des clients de demander des courses de taxi, et à des chauffeurs de les accepter. L'accès à chaque espace est sécurisé selon le rôle de l'utilisateur (client ou chauffeur).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Stack technique
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+| Côté | Technologie | Rôle |
+|---|---|---|
+| Backend | Laravel 11 | API REST, base de données, authentification |
+| Frontend | Vue.js 3 | Interface utilisateur, navigation entre pages |
+| Auth | Laravel Sanctum | Génération et vérification des tokens |
+| HTTP | Axios | Communication entre Vue.js et l'API Laravel |
+| BDD | MySQL | Stockage des utilisateurs et des courses |
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Fonctionnalités
 
-## Laravel Sponsors
+### Client
+- Inscription et connexion
+- Demander une course (départ, destination, horaire)
+- Voir le statut de sa course
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Chauffeur
+- Inscription et connexion
+- Voir les courses en attente
+- Accepter une course
 
-### Premium Partners
+### Admin *(en cours)*
+- Gérer les chauffeurs
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+---
 
-## Contributing
+## Architecture du projet
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```
+vtc-project/
+├── app/
+│   ├── Http/Controllers/
+│   │   ├── AuthController.php      → inscription, connexion, déconnexion
+│   │   └── CourseController.php    → gestion des courses
+│   └── Models/
+│       ├── Client.php              → modèle client (authentifiable)
+│       ├── Chauffeur.php           → modèle chauffeur (authentifiable)
+│       └── Course.php              → modèle course (avec relations)
+├── routes/
+│   └── api.php                     → toutes les routes de l'API
+├── database/
+│   └── migrations/                 → création des tables en BDD
+└── resources/js/
+    ├── app.js                      → point d'entrée Vue.js
+    ├── App.vue                     → composant racine
+    ├── router/
+    │   └── index.js                → routes Vue (quelle page selon l'URL)
+    └── components/
+        ├── Home.vue                → page d'accueil
+        ├── Login.vue               → connexion
+        ├── Register.vue            → inscription
+        ├── CourseRequest.vue       → demande de course (client)
+        ├── CourseList.vue          → liste des courses (chauffeur)
+        └── ChauffeurCourses.vue    → dashboard chauffeur
+```
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Base de données
 
-## Security Vulnerabilities
+### Table `clients`
+Stocke les comptes clients. Chaque client peut passer plusieurs courses.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Table `chauffeurs`
+Stocke les comptes chauffeurs. Chaque chauffeur peut accepter plusieurs courses.
 
-## License
+### Table `courses`
+| Colonne | Description |
+|---|---|
+| `client_id` | Qui a demandé la course |
+| `chauffeur_id` | Qui l'a acceptée (vide si en attente) |
+| `departure` | Adresse de départ |
+| `destination` | Adresse d'arrivée |
+| `scheduled_at` | Date et heure prévues |
+| `status` | `pending` (en attente) ou `accepted` |
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## Routes API
+
+### Routes publiques (sans connexion)
+| Méthode | URL | Description |
+|---|---|---|
+| POST | `/api/register/client` | Inscrire un client |
+| POST | `/api/register/chauffeur` | Inscrire un chauffeur |
+| POST | `/api/login` | Se connecter (client ou chauffeur) |
+
+### Routes protégées (token requis)
+| Méthode | URL | Description |
+|---|---|---|
+| POST | `/api/logout` | Se déconnecter |
+| POST | `/api/courses` | Créer une course (client) |
+| GET | `/api/courses` | Lister les courses en attente (chauffeur) |
+| POST | `/api/courses/{id}/accept` | Accepter une course (chauffeur) |
+| GET | `/api/courses/{id}` | Détail d'une course |
+
+---
+
+## Comment fonctionne l'authentification
+
+1. L'utilisateur se connecte via `/api/login`
+2. Laravel génère un **token** unique et le renvoie avec le **rôle** (client ou chauffeur)
+3. Vue.js stocke ces deux infos dans le **localStorage** du navigateur
+4. À chaque requête suivante, Vue envoie le token dans le header `Authorization: Bearer ...`
+5. Laravel vérifie le token via **Sanctum** avant d'autoriser l'accès
+
+---
+
+## Installation
+
+### Prérequis
+- PHP 8.2+
+- Composer
+- Node.js + npm
+- MySQL
+
+### Étapes
+
+```bash
+# 1. Cloner le projet
+git clone <url-du-repo>
+cd vtc-project
+
+# 2. Installer les dépendances PHP
+composer install
+
+# 3. Installer les dépendances JS
+npm install
+
+# 4. Configurer l'environnement
+cp .env.example .env
+php artisan key:generate
+
+# 5. Configurer la base de données dans .env
+# DB_DATABASE=vtc_project
+# DB_USERNAME=root
+# DB_PASSWORD=...
+
+# 6. Lancer les migrations
+php artisan migrate
+
+# 7. Démarrer les serveurs
+php artisan serve        # Laravel sur http://localhost:8000
+npm run dev              # Vue.js sur http://localhost:5173
+```
+
+---
+
+## Ce qui reste à faire
+
+- [ ] Guards Vue.js sur les routes `/client` et `/chauffeur/dashboard`
+- [ ] Option d'inscription chauffeur dans le formulaire Register
+- [ ] Page admin pour gérer les chauffeurs
+
+---
+
+## Auteur
+
+Projet développé par Yassi dans le cadre d'une formation développement web.
