@@ -3,6 +3,13 @@
       <h2>Inscription</h2>
       <form @submit.prevent="register">
         <div>
+          <label>Je suis :</label>
+          <select v-model="role">
+            <option value="client">Client</option>
+            <option value="chauffeur">Chauffeur</option>
+          </select>
+        </div>
+        <div>
           <label for="first_name">Prénom :</label>
           <input type="text" v-model="firstName" id="first_name" required />
         </div>
@@ -35,6 +42,7 @@
     name: 'Register',
     data() {
       return {
+        role: 'client',
         firstName: '',
         lastName: '',
         email: '',
@@ -53,7 +61,7 @@
         try {
           // Concatène prénom et nom pour former le champ "name"
           const fullName = this.firstName + ' ' + this.lastName;
-          const response = await axios.post('http://localhost:8000/api/register/client', {
+          await axios.post(`http://localhost:8000/api/register/${this.role}`, {
             name: fullName,
             email: this.email,
             password: this.password,
