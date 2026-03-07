@@ -10,7 +10,6 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
-    // Inscription d'un client
     public function registerClient(Request $request)
     {
         $request->validate([
@@ -30,7 +29,6 @@ class AuthController extends Controller
         return response()->json(['access_token' => $token, 'role' => 'client'], 201);
     }
 
-    // Inscription d'un chauffeur
     public function registerChauffeur(Request $request)
     {
         $request->validate([
@@ -50,7 +48,6 @@ class AuthController extends Controller
         return response()->json(['access_token' => $token, 'role' => 'chauffeur', 'statut' => $chauffeur->statut], 201);
     }
 
-    // Connexion (vérifie d'abord pour client, puis pour chauffeur)
     public function login(Request $request)
     {
         $request->validate([
@@ -67,7 +64,6 @@ class AuthController extends Controller
         $chauffeur = Chauffeur::where('email', $request->email)->first();
         if ($chauffeur && Hash::check($request->password, $chauffeur->password)) {
             $token = $chauffeur->createToken('auth_token')->plainTextToken;
-            // On inclut le statut pour que le frontend sache si le chauffeur est approuvé
             return response()->json(['access_token' => $token, 'role' => 'chauffeur', 'statut' => $chauffeur->statut]);
         }
 

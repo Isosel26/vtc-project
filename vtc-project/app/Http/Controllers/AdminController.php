@@ -9,7 +9,6 @@ use App\Models\Chauffeur;
 
 class AdminController extends Controller
 {
-    // Connexion de l'admin
     public function login(Request $request)
     {
         $request->validate([
@@ -28,14 +27,12 @@ class AdminController extends Controller
         return response()->json(['access_token' => $token, 'role' => 'admin']);
     }
 
-    // Liste de tous les chauffeurs
     public function listChauffeurs()
     {
         $chauffeurs = Chauffeur::select('id', 'name', 'email', 'statut')->get();
         return response()->json($chauffeurs);
     }
 
-    // Approuver un chauffeur
     public function approuver($id)
     {
         $chauffeur = Chauffeur::findOrFail($id);
@@ -43,7 +40,6 @@ class AdminController extends Controller
         return response()->json(['message' => 'Chauffeur approuvé.', 'chauffeur' => $chauffeur]);
     }
 
-    // Refuser un chauffeur
     public function refuser($id)
     {
         $chauffeur = Chauffeur::findOrFail($id);

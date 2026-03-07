@@ -8,7 +8,6 @@ use App\Models\Chauffeur;
 
 class CourseController extends Controller
 {
-    // Création d'une demande de course par un client
     public function createCourse(Request $request)
     {
         $request->validate([
@@ -30,19 +29,16 @@ class CourseController extends Controller
         return response()->json($course, 201);
     }
 
-    // Liste des courses en attente (pour les chauffeurs)
     public function listCourses()
     {
         $courses = Course::where('status', 'pending')->get();
         return response()->json($courses);
     }
 
-    // Courses du client connecté avec le chauffeur associé si acceptée
     public function clientCourses()
     {
         $client = auth()->user();
 
-        // with('chauffeur') charge les infos du chauffeur en une seule requête
         $courses = Course::where('client_id', $client->id)
             ->with('chauffeur:id,name,email')
             ->orderBy('created_at', 'desc')
@@ -51,12 +47,10 @@ class CourseController extends Controller
         return response()->json($courses);
     }
 
-    // Accepter une course (pour un chauffeur)
     public function acceptCourse(Request $request, $id)
     {
         $chauffeur = auth()->user();
 
-        // Vérifie que le chauffeur est approuvé par l'admin
         if (!($chauffeur instanceof Chauffeur) || $chauffeur->statut !== 'approved') {
             return response()->json(['message' => 'Votre compte n\'est pas encore approuvé par l\'administrateur.'], 403);
         }
@@ -75,7 +69,6 @@ class CourseController extends Controller
         return response()->json(['message' => 'Course acceptée', 'course' => $course]);
     }
 
-    // Afficher les détails d'une course
     public function showCourse($id)
     {
         $course = Course::findOrFail($id);
