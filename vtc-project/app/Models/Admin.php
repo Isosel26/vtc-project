@@ -6,7 +6,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class Chauffeur extends Authenticatable
+class Admin extends Authenticatable
 {
     use HasApiTokens, Notifiable;
 
@@ -14,7 +14,6 @@ class Chauffeur extends Authenticatable
         'name',
         'email',
         'password',
-        'statut',
     ];
 
     protected $hidden = [

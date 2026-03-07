@@ -31,23 +31,31 @@ export default {
   methods: {
     async login() {
       try {
-        // Appel à l'API Laravel pour la connexion
-        const response = await axios.post('http://localhost:8000/api/login', {
-          email: this.email,
-          password: this.password
-        });
-        
+        // On essaie d'abord la connexion admin
+        let response;
+        try {
+          response = await axios.post('http://localhost:8000/api/admin/login', {
+            email: this.email,
+            password: this.password
+          });
+        } catch {
+          // Si ça échoue, on essaie la connexion client/chauffeur
+          response = await axios.post('http://localhost:8000/api/login', {
+            email: this.email,
+            password: this.password
+          });
+        }
+
         const token = response.data.access_token;
-        const role = response.data.role; // 'client' ou 'chauffeur'
-        
-        // Stocke le token dans le localStorage pour une utilisation ultérieure
+        const role = response.data.role;
+
         localStorage.setItem('access_token', token);
         localStorage.setItem('user_role', role);
-        
-        alert('Connexion réussie !');
-        
-        // Redirige l'utilisateur selon son rôle
-        if (role === 'client') {
+
+        // Redirige selon le rôle
+        if (role === 'admin') {
+          this.$router.push('/admin');
+        } else if (role === 'client') {
           this.$router.push('/client');
         } else if (role === 'chauffeur') {
           this.$router.push('/chauffeur');

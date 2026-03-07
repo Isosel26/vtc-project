@@ -5,6 +5,7 @@ import Register from '../components/Register.vue';
 import CourseRequest from '../components/CourseRequest.vue';
 import CourseList from '../components/CourseList.vue';
 import ChauffeurCourses from '../components/ChauffeurCourses.vue';
+import AdminDashboard from '../components/AdminDashboard.vue';
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
@@ -15,6 +16,7 @@ const routes = [
   { path: '/client', name: 'Client', component: CourseRequest, meta: { requiresAuth: true, role: 'client' } },
   { path: '/chauffeur', name: 'Chauffeur', component: CourseList, meta: { requiresAuth: true, role: 'chauffeur' } },
   { path: '/chauffeur/dashboard', name: 'ChauffeurDashboard', component: ChauffeurCourses, meta: { requiresAuth: true, role: 'chauffeur' } },
+  { path: '/admin', name: 'Admin', component: AdminDashboard, meta: { requiresAuth: true, role: 'admin' } },
 ];
 
 const router = createRouter({
