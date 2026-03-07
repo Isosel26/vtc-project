@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Course;
+use App\Models\Chauffeur;
 
 class CourseController extends Controller
 {
@@ -39,19 +40,23 @@ class CourseController extends Controller
     // Accepter une course (pour un chauffeur)
     public function acceptCourse(Request $request, $id)
     {
+        $chauffeur = auth()->user();
+
+        // Vérifie que le chauffeur est approuvé par l'admin
+        if (!($chauffeur instanceof Chauffeur) || $chauffeur->statut !== 'approved') {
+            return response()->json(['message' => 'Votre compte n\'est pas encore approuvé par l\'administrateur.'], 403);
+        }
+
         $course = Course::findOrFail($id);
 
         if ($course->status !== 'pending') {
             return response()->json(['message' => 'La course n\'est plus disponible.'], 400);
         }
 
-        $chauffeur = auth()->user();
         $course->update([
             'chauffeur_id' => $chauffeur->id,
             'status'       => 'accepted',
         ]);
-
-        // Optionnel : déclencher une notification ici
 
         return response()->json(['message' => 'Course acceptée', 'course' => $course]);
     }

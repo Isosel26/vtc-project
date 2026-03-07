@@ -31,7 +31,6 @@ export default {
   methods: {
     async login() {
       try {
-        // On essaie d'abord la connexion admin
         let response;
         try {
           response = await axios.post('http://localhost:8000/api/admin/login', {
@@ -39,7 +38,6 @@ export default {
             password: this.password
           });
         } catch {
-          // Si ça échoue, on essaie la connexion client/chauffeur
           response = await axios.post('http://localhost:8000/api/login', {
             email: this.email,
             password: this.password
@@ -48,11 +46,16 @@ export default {
 
         const token = response.data.access_token;
         const role = response.data.role;
+        const statut = response.data.statut;
 
         localStorage.setItem('access_token', token);
         localStorage.setItem('user_role', role);
 
-        // Redirige selon le rôle
+        // On stocke le statut uniquement pour les chauffeurs
+        if (statut) {
+          localStorage.setItem('chauffeur_statut', statut);
+        }
+
         if (role === 'admin') {
           this.$router.push('/admin');
         } else if (role === 'client') {
