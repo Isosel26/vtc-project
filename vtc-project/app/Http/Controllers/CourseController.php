@@ -37,6 +37,20 @@ class CourseController extends Controller
         return response()->json($courses);
     }
 
+    // Courses du client connecté avec le chauffeur associé si acceptée
+    public function clientCourses()
+    {
+        $client = auth()->user();
+
+        // with('chauffeur') charge les infos du chauffeur en une seule requête
+        $courses = Course::where('client_id', $client->id)
+            ->with('chauffeur:id,name,email')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json($courses);
+    }
+
     // Accepter une course (pour un chauffeur)
     public function acceptCourse(Request $request, $id)
     {

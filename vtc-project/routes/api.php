@@ -20,6 +20,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Routes pour les clients
     Route::post('/courses', [CourseController::class, 'createCourse']);
     Route::get('/courses/{id}', [CourseController::class, 'showCourse']);
+    Route::get('/client/courses', [CourseController::class, 'clientCourses']);
 
     // Routes pour les chauffeurs
     Route::get('/courses', [CourseController::class, 'listCourses']);
