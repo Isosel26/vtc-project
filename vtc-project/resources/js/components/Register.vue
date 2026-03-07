@@ -1,92 +1,224 @@
 <template>
-    <div class="register">
+  <div class="page">
+    <div class="card">
       <h2>Inscription</h2>
       <form @submit.prevent="register">
-        <div>
-          <label>Je suis :</label>
+        <div class="form-group">
+          <label>Je suis</label>
           <select v-model="role">
             <option value="client">Client</option>
             <option value="chauffeur">Chauffeur</option>
           </select>
         </div>
-        <div>
-          <label for="first_name">Prénom :</label>
-          <input type="text" v-model="firstName" id="first_name" required />
+        <div class="form-group">
+          <label for="first_name">Prénom</label>
+          <input type="text" v-model="firstName" id="first_name" placeholder="Jean" required />
         </div>
-        <div>
-          <label for="last_name">Nom :</label>
-          <input type="text" v-model="lastName" id="last_name" required />
+        <div class="form-group">
+          <label for="last_name">Nom</label>
+          <input type="text" v-model="lastName" id="last_name" placeholder="Dupont" required />
         </div>
-        <div>
-          <label for="email">Email :</label>
-          <input type="email" v-model="email" id="email" required />
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" v-model="email" id="email" placeholder="votre@email.fr" required />
         </div>
-        <div>
-          <label for="password">Mot de passe :</label>
-          <input type="password" v-model="password" id="password" required />
+        <div class="form-group">
+          <label for="password">Mot de passe</label>
+          <input type="password" v-model="password" id="password" placeholder="••••••••" required />
         </div>
-        <div>
-          <label for="password_confirmation">Confirmer le mot de passe :</label>
-          <input type="password" v-model="passwordConfirmation" id="password_confirmation" required />
+        <div class="form-group">
+          <label for="password_confirmation">Confirmer le mot de passe</label>
+          <input type="password" v-model="passwordConfirmation" id="password_confirmation" placeholder="••••••••" required />
         </div>
-        <button type="submit">S'inscrire</button>
+        <button type="submit" class="btn">S'inscrire</button>
       </form>
       <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+      <router-link to="/login" class="link">Déjà un compte ? Se connecter</router-link>
     </div>
-  </template>
-  
-  <script>
-  import axios from 'axios';
-  
-  export default {
-    name: 'Register',
-    data() {
-      return {
-        role: 'client',
-        firstName: '',
-        lastName: '',
-        email: '',
-        password: '',
-        passwordConfirmation: '',
-        errorMessage: ''
-      };
-    },
-    methods: {
-      async register() {
-        // Vérifie que le mot de passe et sa confirmation correspondent
-        if (this.password !== this.passwordConfirmation) {
-          this.errorMessage = "Les mots de passe ne correspondent pas.";
-          return;
-        }
-        try {
-          // Concatène prénom et nom pour former le champ "name"
-          const fullName = this.firstName + ' ' + this.lastName;
-          await axios.post(`http://localhost:8000/api/register/${this.role}`, {
-            name: fullName,
-            email: this.email,
-            password: this.password,
-            password_confirmation: this.passwordConfirmation
-          });
-          alert('Inscription réussie ! Vous pouvez maintenant vous connecter.');
-          // Redirige vers la page de connexion
-          this.$router.push('/login');
-        } catch (error) {
-          console.error(error);
-          if (error.response && error.response.data && error.response.data.errors) {
-            // Rassemble les messages d'erreur
-            this.errorMessage = Object.values(error.response.data.errors).join(' ');
-          } else {
-            this.errorMessage = 'Erreur lors de l\'inscription.';
-          }
+  </div>
+</template>
+
+<script>
+import axios from 'axios';
+
+export default {
+  name: 'Register',
+  data() {
+    return {
+      role: 'client',
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+      passwordConfirmation: '',
+      errorMessage: ''
+    };
+  },
+  methods: {
+    async register() {
+      if (this.password !== this.passwordConfirmation) {
+        this.errorMessage = "Les mots de passe ne correspondent pas.";
+        return;
+      }
+      try {
+        const fullName = this.firstName + ' ' + this.lastName;
+        await axios.post(`http://localhost:8000/api/register/${this.role}`, {
+          name: fullName,
+          email: this.email,
+          password: this.password,
+          password_confirmation: this.passwordConfirmation
+        });
+        alert('Inscription réussie ! Vous pouvez maintenant vous connecter.');
+        this.$router.push('/login');
+      } catch (error) {
+        console.error(error);
+        if (error.response && error.response.data && error.response.data.errors) {
+          this.errorMessage = Object.values(error.response.data.errors).join(' ');
+        } else {
+          this.errorMessage = "Erreur lors de l'inscription.";
         }
       }
     }
-  };
-  </script>
-  
-  <style scoped>
-  .error {
-    color: red;
   }
-  </style>
-  
+};
+</script>
+
+<style scoped>
+.page {
+  min-height: 100vh;
+  background-color: #0a0a0a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.page::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  right: -100px;
+  width: 350px;
+  height: 350px;
+  background: #ffffff;
+  border-radius: 50% 40% 60% 30% / 40% 50% 30% 60%;
+  opacity: 0.06;
+}
+
+.page::after {
+  content: '';
+  position: absolute;
+  bottom: -120px;
+  left: -80px;
+  width: 400px;
+  height: 400px;
+  background: #ffffff;
+  border-radius: 60% 40% 30% 50% / 50% 60% 40% 30%;
+  opacity: 0.06;
+}
+
+.card {
+  background-color: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 16px;
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 420px;
+  position: relative;
+  z-index: 1;
+}
+
+.card h2 {
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #aaaaaa;
+  margin-bottom: 0.4rem;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  background-color: #2a2a2a;
+  border: 1px solid #3a3a3a;
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #888888;
+}
+
+.form-group input::placeholder {
+  color: #555555;
+}
+
+.form-group select option {
+  background-color: #2a2a2a;
+}
+
+.btn {
+  width: 100%;
+  padding: 0.85rem;
+  background-color: #888888;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-top: 0.75rem;
+  transition: background-color 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+
+.btn:hover {
+  background-color: #aaaaaa;
+}
+
+.error {
+  color: #ff6b6b;
+  font-size: 0.85rem;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.link {
+  color: #aaaaaa;
+  text-decoration: none;
+  font-size: 0.82rem;
+  text-align: center;
+  display: block;
+  margin-top: 1.25rem;
+  transition: color 0.2s;
+}
+
+.link:hover {
+  color: #ffffff;
+}
+</style>
